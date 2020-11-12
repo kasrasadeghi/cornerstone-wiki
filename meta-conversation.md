@@ -36,6 +36,9 @@ or case.  Languages that have less restrictions have a simpler grammar, and thus
 it is easier to have meta-discussions.  When the complexity of the language
 grows, so too does the complexity of meta-discussions.
 
+see:
+- [English vs Farsi: Anecdotes of Natural Languages](english-vs-farsi.md)
+
 In the context of programming, when meta-discussions about a program are too
 complicated, the compiler and the environment cannot provide helpful errors.  It
 may require too many assumptions about the program, too much computation, or may
@@ -57,3 +60,5 @@ see:
   at its forefront
 
 # Design a Modular Compiler
+
+TODO modular compiler from compiler-to-programmer direction of conversation

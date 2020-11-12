@@ -52,11 +52,13 @@ in languages, such and string and integer literals.
 See the above discussion of the Parser and the comparison with S-expressions for
 more information.
 
-TODO continue tags
+TODO related to parser restructure
+TODO - move tags to their own file
+TODO - move representation to its own file
 
 # Subtexp and Texp Composition
 
-TODO composition
+TODO subtexp composition
 
 # Allocation
 

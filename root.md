@@ -1,5 +1,4 @@
 # wiki root
-- created: oct 18
 
 The Cornerstone project's premise is to focus on the problems that lie in the
 ecosystem of programming languages and thus deliberately minimizing the
@@ -32,9 +31,6 @@ from inside the compiler to the developer.
 
 see:
 - [Error Messaging Primacy](error-messages.md)
-
-
-- update: oct 23
 
 Syntax is the discussion of the problem of language representation.  Cornerstone
 handles representation in generality with Texps (see: [Texp](texp.md)), akin to
