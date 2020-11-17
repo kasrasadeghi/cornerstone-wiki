@@ -1,6 +1,13 @@
 <html>
   <head>
+    <title>Cornerstone Wiki</title>
+    <meta http-equiv="Cache-control" content="no-cache">
+
     <style>
+      pre {
+          margin: 0px;
+      }
+
       #notecard {
           font-family: "Courier New", Courier, monospace;
           font-size: 150%;
@@ -91,8 +98,12 @@
 
       function addNotecard(content) {
 
+        // TODO animation
+        // TODO maybe add notecards to the bottom and scroll down to them,
+        // instead of having an animation
+
         let notecardContent = document.createElement("pre");
-        notecardContent.textContent = content;
+        notecardContent.innerHTML = content;
 
         let notecard = document.createElement("li");
         notecard.id = "notecard";
@@ -108,29 +119,89 @@
       function handleKey(event) {
         // TODO change the form to handle different github repositories
         // 13 is the [ENTER] keycode
+
+        // TODO temporarily disable notecard getter
         if (event.keyCode === 13) {
-          let inputfield = document.getElementById("notecard-maker");
-          let input = inputfield.value;
-          inputfield.value = "";
-          addNotecard(input);
         }
       }
 
-      window.onload = function() {
+      /* parser */
+
+      //TODO browser, notecard del, collapse notecard
+
+      let notecard_list = [];
+
+      function handle_link(req) {
+        let [_, base_url, after] =
+            window.location.href.match(/(.*index\.html).*/);
+        notecard_list.push(req);
+        history.pushState({}, "Cornerstone Wiki",
+                          base_url + "?/"
+                          + notecard_list.map(nc => nc.url).join("/"));
+
+        // SOON actually fetch
+        fetch_notecard(req.url);
+
+        console.log(req.url);
+        return false;
+      }
+
+      document.addEventListener('click', event => {
+        if (event.target.nodeName === 'A') {
+
+        }
+      })
+
+      function repr(content) {
+        let new_content = content.split(/\n/)
+          .map(l => {
+
+            // TODO use global match to account for multiline titles and urls
+            if (l.startsWith('- [')) {
+              let m = l.match(/(- )(\[)(.*)(\]\()(.*)(\).*)/);
+              // - [<title>](<url>)
+              //     1     2    3          4     5        6
+              // => ["- ", "[", "<title>", "](", "<url>", ")"]
+
+              // TODO make this add a notecard that can be deleted
+              // TODO modify the window.location so the URL can be copy pasted
+
+              let notecard_req = {url: m[5]};
+              console.log(notecard_req);
+
+              let pre_link = m.slice(1, 2).join("");
+              let link_content = m.slice(2, 7).join("");
+
+              let result = `${pre_link}<a href="#" onclick='return handle_link(${JSON.stringify(notecard_req)});'>${link_content}</a>`;
+              return result;
+            }
+            return l;
+          }).join("\n");
+
+        return new_content;
+      }
+
+      function fetch_notecard(path) {
         let repo = 'kasrasadeghi/cornerstone-wiki';
         let branch = 'master';
-        let file = 'root.md'
-        fetch(`https://raw.githubusercontent.com/${repo}/${branch}/${file}`)
+        fetch(`https://raw.githubusercontent.com/${repo}/${branch}/${path}`)
           .then(response => response.text())
-          .then(text => {
-            addNotecard(text);
-          });
+          .then(async text => addNotecard( await repr(text)));
       }
+
+      window.onload = function() {
+        // TODO check url for notecards and parse/fetch them
+
+        fetch_notecard("root.md");
+      };
     </script>
   </head>
 
   <body>
-    <input id="notecard-maker" type="text" onkeypress="handleKey(event)">
+    <div class="nav">
+      <!-- TODO add checkbox for keyboard shortcuts, maybe using local storage-->
+    </div>
+
     <ul id="notecards" ondrop="drop(event)" ondragover="allowDrop(event)"/>
   </body>
 </html>
