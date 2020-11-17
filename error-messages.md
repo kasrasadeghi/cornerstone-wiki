@@ -5,7 +5,7 @@ Error messages serve as the primary way a compiler communicates with the
 developer.
 
 see:
-- [Language Complexity and its effect of Meta-Programming](meta-discussion.md)
+- [Language Complexity and its effect of Meta-Programming](meta-conversation.md)
 
 - error messages are compile-time communication
 - nonlanguage feature sets
