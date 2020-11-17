@@ -133,22 +133,21 @@
 
       function handle_link(req) {
         let [_, base_url, after] =
-            window.location.href.match(/(.*index\.html).*/);
+            window.location.href.match(/(.*index\.html)(.*)/);
         notecard_list.push(req);
-        history.pushState({}, "Cornerstone Wiki",
+
+        // TODO make pushstate actually update notecard_list
+        history.pushState({open_notes: notecard_list}, "Cornerstone Wiki",
                           base_url + "?/"
                           + notecard_list.map(nc => nc.url).join("/"));
 
-        // SOON actually fetch
         fetch_notecard(req.url);
-
-        console.log(req.url);
         return false;
       }
 
       document.addEventListener('click', event => {
         if (event.target.nodeName === 'A') {
-
+          // TODO consider using this instead of href='#'
         }
       })
 
@@ -167,8 +166,6 @@
               // TODO modify the window.location so the URL can be copy pasted
 
               let notecard_req = {url: m[5]};
-              console.log(notecard_req);
-
               let pre_link = m.slice(1, 2).join("");
               let link_content = m.slice(2, 7).join("");
 
@@ -181,26 +178,45 @@
         return new_content;
       }
 
-      function fetch_notecard(path) {
+      function fetch_notecard(path, cb) {
         let repo = 'kasrasadeghi/cornerstone-wiki';
         let branch = 'master';
         fetch(`https://raw.githubusercontent.com/${repo}/${branch}/${path}`)
           .then(response => response.text())
-          .then(async text => addNotecard( await repr(text)));
+          .then(async text => {
+            addNotecard( await repr(text));
+            cb();
+          })
+          .catch(e => null/* TODO, figure out why it thinks cb isn't a function*/);
       }
 
-      window.onload = function() {
-        // TODO check url for notecards and parse/fetch them
+      // TODO how to handle duplicate links?
+      // TODO how to handle opening page when there's already another page
+      //      below? use indentation?
 
-        fetch_notecard("root.md");
-      };
+      // TODO have more keyboard shortcuts
+
+      window.onload = function() {
+        let [_, base_url, after] =
+            window.location.href.match(/(.*index\.html)(.*)/);
+
+        fetch_notecard("root.md", () => {
+          if (after !== "") {
+            let notecards = after.substring(2).split("/");
+            for (notecard of notecards) {
+              fetch_notecard(notecard);
+              notecard_list.push({url: notecard});
+            }
+          }
+        });
+      }
     </script>
   </head>
 
   <body>
-    <div class="nav">
+    <!-- <div class="nav"> -->
       <!-- TODO add checkbox for keyboard shortcuts, maybe using local storage-->
-    </div>
+    <!-- </div> -->
 
     <ul id="notecards" ondrop="drop(event)" ondragover="allowDrop(event)"/>
   </body>
