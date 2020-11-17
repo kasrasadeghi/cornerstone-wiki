@@ -1,0 +1,136 @@
+<html>
+  <head>
+    <style>
+      #notecard {
+          font-family: "Courier New", Courier, monospace;
+          font-size: 150%;
+          margin: 10px;
+          border: 2px solid black;
+          list-style-type: none;
+          padding: 5px;
+      }
+
+      #notecards {
+          padding: 0px;
+          border: 2px solid red;
+      }
+    </style>
+
+    <script>
+
+      /* dragging */
+      var selected_node = null;
+      var dropsite = -1;
+
+      function dragstart(ev) {
+        selected_node = ev.target;
+        selected_node.style.color = 'grey';
+        ev.dataTransfer.setData('text', ev.target.innerText);
+        ev.dataTransfer.dropEffect = 'move';
+      }
+
+      function allowDrop(ev) {
+        ev.preventDefault();
+      }
+
+      function drop(ev) {
+        ev.preventDefault();
+      }
+
+      function makeDraggable(element) {
+        element.draggable = true;
+        element.ondragstart = dragstart;
+      }
+
+      // TODO consider using mousemove, mousedown, and mouseup and making my own
+      // drop
+      // - if we do this, we should shrink the held notecard so that we can see
+      //   where we're actually putting it
+
+      function calculateDropsite(mouseY) {
+        dropsite = 0;
+        for (notecard of notecards.children) {
+          let midpoint_y =
+              notecard.getBoundingClientRect().top
+              + (notecard.getBoundingClientRect().height / 2);
+
+          if (event.clientY < midpoint_y) {
+            break;
+          }
+          ++dropsite;
+        }
+      }
+
+      document.addEventListener('mousemove', (event) => {
+        if (selected_node === null) return;
+
+        calculateDropsite(event.clientY);
+      });
+
+      // TODO move the notecard while dragging without having the base
+
+      document.addEventListener('dragend', (event) => {
+        if (selected_node === null) return;
+
+        let notecards = document.getElementById("notecards");
+
+        calculateDropsite(event.clientY);
+
+        if (dropsite === notecards.children.length) {
+          notecards.appendChild(selected_node);
+        } else {
+          notecards.insertBefore(selected_node, notecards.children[dropsite]);
+        }
+        dropsite = -1;
+
+        selected_node.style.color = 'black';
+        selected_node = null;
+      });
+
+      /* notecard input handling */
+
+      function addNotecard(content) {
+
+        let notecardContent = document.createElement("pre");
+        notecardContent.textContent = content;
+
+        let notecard = document.createElement("li");
+        notecard.id = "notecard";
+        notecard.className = "dropsite";
+        notecard.appendChild(notecardContent);
+
+        let notecards = document.getElementById("notecards");
+        notecards.appendChild(notecard);
+
+        makeDraggable(notecard);
+      }
+
+      function handleKey(event) {
+        // TODO change the form to handle different github repositories
+        // 13 is the [ENTER] keycode
+        if (event.keyCode === 13) {
+          let inputfield = document.getElementById("notecard-maker");
+          let input = inputfield.value;
+          inputfield.value = "";
+          addNotecard(input);
+        }
+      }
+
+      window.onload = function() {
+        let repo = 'kasrasadeghi/cornerstone-wiki';
+        let branch = 'master';
+        let file = 'root.md'
+        fetch(`https://raw.githubusercontent.com/${repo}/${branch}/${file}`)
+          .then(response => response.text())
+          .then(text => {
+            addNotecard(text);
+          });
+      }
+    </script>
+  </head>
+
+  <body>
+    <input id="notecard-maker" type="text" onkeypress="handleKey(event)">
+    <ul id="notecards" ondrop="drop(event)" ondragover="allowDrop(event)"/>
+  </body>
+</html>

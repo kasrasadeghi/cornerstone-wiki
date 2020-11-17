@@ -12,7 +12,7 @@ background:
 - [Texp Grammar](texp-grammar.md)
 
 see:
-- [Matcher technical documentation](matcher-technical.md)
+- [Matcher technical documentation](matcher-tech.md)
 
 # Overview
 

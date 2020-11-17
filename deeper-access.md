@@ -24,6 +24,11 @@ Solutions
 Here are some solutions to this problem:
 - run those passes for the compiler and cache the results (lazy approach)
   - k: might be hard to reason about
-- register a hook that catches error messages before they propagate back up to
+
+TODO
+- eager:
+  - run composable piece
+- lazy:
+  - register a hook that catches error messages before they propagate back up tow
   the user
   - k: very flexible, but also very spaghetti
