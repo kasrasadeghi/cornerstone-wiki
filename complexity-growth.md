@@ -1,6 +1,5 @@
 | (complexity growth) | implies (staged compilation) |
 \----------------------------------------------------/
-- created: oct 23
 
 > "Here at the end of Moore's Law, software is the hard part too"
 > - Chris Lattner, in an interview with Lex Fridman about the future of computing

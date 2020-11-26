@@ -10,6 +10,7 @@ does not.
 background:
 - [Texp](texp.md)
 - [Texp Grammar](texp-grammar.md)
+- [Error Messages](error-messages.md)
 
 see:
 - [Matcher technical documentation](matcher-tech.md)
